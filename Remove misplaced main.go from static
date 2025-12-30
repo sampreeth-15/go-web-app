@@ -1,1 +1,37 @@
 
+package main
+
+import (
+	"log"
+	"net/http"
+)
+
+func main() {
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/home", http.StatusFound)
+	})
+
+	http.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/home.html")
+	})
+
+	http.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/about.html")
+	})
+
+	http.HandleFunc("/courses", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/courses.html")
+	})
+
+	http.HandleFunc("/contact", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/contact.html")
+	})
+
+	// serve images and other assets
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	log.Println("Server running at http://localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
